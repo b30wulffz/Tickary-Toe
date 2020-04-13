@@ -1,8 +1,5 @@
 from random import choice
 from ursina import *
-import time
-from multiprocessing import Process
-
 
 ### Backend ###
 
@@ -763,6 +760,8 @@ def ExperimentalHeuristic(problem, state):
 
 ### Algorithms ###
 
+# Basic Minimax
+
 
 def MaxValue(problem, state):
     #     print(state)
@@ -795,7 +794,7 @@ def MinValue(problem, state):
             v = [a, newMin]
     return v
 
-# alpha beta pruning
+# Alpha Beta Pruning
 
 
 def MaxValueAB(problem, state, alpha, beta):
@@ -810,7 +809,7 @@ def MaxValueAB(problem, state, alpha, beta):
             state, a, True), alpha, beta)
         state[a[0]][a[1]] = ""
 
-        # it compares just the two branched, if the condition a>=b satisfies, it doesn't check further
+        # it compares just the two branches, if the condition a>=b satisfies, it doesn't check further
 
         newMax = max(v[1], result[1])
         if newMax != v[1]:
@@ -846,6 +845,8 @@ def MinValueAB(problem, state, alpha, beta):
         beta = min(beta, v[1])
 
     return v
+
+# Depth Limited
 
 
 def MaxValueDepthLim(problem, state, depth, limit):
@@ -1025,7 +1026,7 @@ def MinValueDepthLimABOpt(problem, state, alpha, beta, depth, limit):
 
 ### Experimental ###
 
-# alpha beta pruning with depth limit and min depth
+# alpha beta pruning with depth limit and min depth using an experimental heuristic
 
 
 def MaxValueExperimental(problem, state, alpha, beta, depth, limit):
@@ -1320,9 +1321,9 @@ class Option(Entity):
 
         def go_back():
             button_click_audio.play()
-            game_audio.stop()
-            if not home_screen.mute_audio:
-                intro_audio.play()
+            # game_audio.stop()
+            # if not home_screen.mute_audio:
+            #     intro_audio.play()
             advance_screen.trigger()
             home_screen.trigger()
             destroy(advance_screen)
@@ -1365,9 +1366,9 @@ class Instructions(Entity):
 
         def go_back():
             button_click_audio.play()
-            game_audio.stop()
-            if not home_screen.mute_audio:
-                intro_audio.play()
+            # game_audio.stop()
+            # if not home_screen.mute_audio:
+            #     intro_audio.play()
             home_screen.trigger()
             destroy(self)
 
@@ -1402,9 +1403,9 @@ class Info(Entity):
 
         def go_back():
             button_click_audio.play()
-            game_audio.stop()
-            if not home_screen.mute_audio:
-                intro_audio.play()
+            # game_audio.stop()
+            # if not home_screen.mute_audio:
+            #     intro_audio.play()
             home_screen.trigger()
             destroy(self)
 
@@ -1483,7 +1484,7 @@ def launch_advance_game():
     cutoff = int(advance_screen.cutoff.value)
 
     if cutoff > dim:
-        dim = cutoff
+        cutoff = dim
 
     board = Problem(dim, cutoff)
     user_play = True
@@ -1545,12 +1546,12 @@ winner_audio = Audio('winner_audio', autoplay=False)
 game_draw_audio = Audio('game_draw_audio', autoplay=False)
 
 Sequence(
-    # Func(SplashScreen),
-    # Wait(5),
-    # Func(intro_audio.play),
-    # Func(SplashScreen, txtr='logo2'),
-    # # Func(Audio, 'intro_audio', loop=True),
-    # Wait(5),
+    Func(SplashScreen),
+    Wait(5),
+    Func(intro_audio.play),
+    Func(SplashScreen, txtr='logo2'),
+    # Func(Audio, 'intro_audio', loop=True),
+    Wait(5),
     Func(home_screen.trigger),
     # Wait(10),
     # Func(home_screen.trigger),
@@ -1564,23 +1565,6 @@ Sequence(
 
 
 ).start()
-
-
-player_name = "X"
-player_color = color.azure
-
-
-# def update_player():
-#     if player_name == "O":
-#         player_name = "X"
-#         player_color = color.orange
-#         print("yes")
-#     else:
-#         player_name = "O"
-#         player_color = color.azure
-#         print("no")
-
-mode = "AI"
 
 
 def input(key):
